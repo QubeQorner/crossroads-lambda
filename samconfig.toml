@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "crossroads-stack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1depc0o9pojzx"
+s3_prefix = "crossroads-stack"
+region = "eu-central-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
