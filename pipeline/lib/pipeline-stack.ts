@@ -57,5 +57,26 @@ export class PipelineStack extends cdk.Stack {
         }),
       ],
     });
+
+    // Add the Deploy stage to our pipeline
+    pipeline.addStage({
+      stageName: 'Prod',
+      actions: [
+        new codepipeline_actions.CloudFormationCreateReplaceChangeSetAction({
+          actionName: 'CreateChangeSet',
+          templatePath: buildOutput.atPath("packaged.yaml"),
+          stackName: 'crossroads-stack',
+          adminPermissions: true,
+          changeSetName: 'crossroads-prod-changeset',
+          runOrder: 1
+        }),
+        new codepipeline_actions.CloudFormationExecuteChangeSetAction({
+          actionName: 'Deploy',
+          stackName: 'crossroads-stack',
+          changeSetName: 'crossroads-prod-changeset',
+          runOrder: 2
+        }),
+      ]
+    })
   }
 }
