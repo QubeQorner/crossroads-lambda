@@ -8,10 +8,25 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 23
     Runtime: nodejs12.x
 
 Resources:
+  CrossroadsApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: CrossroadsTokenAuthorizer
+        Authorizers:
+          CrossroadsTokenAuthorizer:
+            FunctionArn: !GetAtt PlayerAuthFunction.Arn
+
+  CrossroadsAuthApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -21,8 +36,30 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
+            RestApiId: !Ref CrossroadsApi
             Path: /hello
             Method: get
+
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/login/
+      Handler: login.handler
+      Events:
+        Login:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CrossroadsAuthApi
+            Path: /login
+            Method: post
+      Policies:
+        - AmazonRDSDataFullAccess
+
+  PlayerAuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: authorizer.handler
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
