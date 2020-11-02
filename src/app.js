@@ -15,6 +15,8 @@ let response;
  * 
  */
 exports.lambdaHandler = async (event, context) => {
+    console.log(JSON.stringify(event, null, 2));
+    console.log(JSON.stringify(context, null, 2));
     try {
         // const ret = await axios(url);
         response = {
