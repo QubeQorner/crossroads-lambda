@@ -54,6 +54,8 @@ exports.handler = async (event, context) => {
             };
         });
 
+        console.log(secret);
+
         const jwtSecret = JSON.parse(secret.SecretString).jwtSecret;
 
         const rdsParams = {
