@@ -38,7 +38,7 @@ exports.handler = async (event, context) => {
         // const hash = await bcrypt.hash(password, 10);
 
         const rdsDataService = new AWS.RDSDataService();
-        const userData = await rdsDataService.executeStatement(rdsParams);
+        const userData = await rdsDataService.executeStatement(rdsParams).promise().catch(console.error);
         console.log("Userdata:", userData);
         if (userData.records.length !== 1){
             response = { // Error response
