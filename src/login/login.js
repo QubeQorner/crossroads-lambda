@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
         const secretParam = {
             SecretId: 'crossroads-prod'
         };
-        const secretStr = await secretsManager.getSecretValue(secretParam).promise().catch((err) => {
+        const secret = await secretsManager.getSecretValue(secretParam).promise().catch((err) => {
             return { // Error response
                 statusCode: 401,
                 headers: {
@@ -54,7 +54,7 @@ exports.handler = async (event, context) => {
             };
         });
 
-        const jwtSecret = JSON.parse(data.SecretString).jwtSecret;
+        const jwtSecret = JSON.parse(secret.SecretString).jwtSecret;
 
         const rdsParams = {
             secretArn: 'arn:aws:secretsmanager:eu-central-1:597880501761:secret:rds-db-credentials/cluster-R2Q7TW2NSOTZSLDRPBDOIMSQE4/crossroads_dba-sJjF7R',
