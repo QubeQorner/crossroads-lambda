@@ -98,8 +98,6 @@ exports.handler = async (event, context) => {
         }
 
         const user = buildUserData(userData.records[0]);
-        // Authenticate user
-        // const user = users.login(username, password);
 
         if (bcrypt.compareSync(password, userData.records[0][3].stringValue)){
             // Issue JWT

@@ -32,8 +32,29 @@ exports.handler = async (event, context) => {
     const token = event.authorizationToken;
 
     try {
+
+        const secretsManager = new AWS.SecretsManager();
+        const secretParam = {
+            SecretId: 'crossroads-prod'
+        };
+        const secret = await secretsManager.getSecretValue(secretParam).promise().catch((err) => {
+            return { // Error response
+                statusCode: 401,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({
+                    error: err,
+                }),
+            };
+        });
+
+        console.log(secret);
+
+        const jwtSecret = JSON.parse(secret.SecretString).jwtSecret;
+
         // Verify JWT
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, jwtSecret);
         const user = decoded.user;
 
         // Checks if the user's scopes allow her to call the current function
