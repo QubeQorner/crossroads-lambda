@@ -54,7 +54,7 @@ Resources:
             Method: post
       Policies:
         - AmazonRDSDataFullAccess
-        - CrossroadsSecretsManagerRead
+        - arn:aws:iam::597880501761:policy/CrossroadsSecretsManagerRead
 
   PlayerAuthFunction:
     Type: AWS::Serverless::Function
