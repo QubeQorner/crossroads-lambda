@@ -31,14 +31,26 @@ exports.handler = async (event, context) => {
             sql: 'SELECT * from players where username = :un',
             parameters: [{
               name: 'un',
-              value: username
+              value: {
+                  "stringValue" : username
+              }
             }]
         }
 
         // const hash = await bcrypt.hash(password, 10);
 
         const rdsDataService = new AWS.RDSDataService();
-        const userData = await rdsDataService.executeStatement(rdsParams).promise().catch(console.error);
+        const userData = await rdsDataService.executeStatement(rdsParams).promise().catch((err) => {
+            return { // Error response
+                statusCode: 401,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({
+                    error: err,
+                }),
+            };
+        });
         console.log("Userdata:", userData);
         if (userData.records.length !== 1){
             response = { // Error response
