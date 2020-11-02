@@ -23,7 +23,25 @@ let response;
 exports.handler = async (event, context) => {
     const { username, password } = JSON.parse(event.body);
 
+
+    console.log("Authenticating: ", username);
     try {
+        const secretsManager = new AWS.SecretsManager();
+        const secretParam = {
+            SecretId: 'crossroads-prod'
+        };
+        const jwtSecret = await secretsManager.getSecretValue(secretParam).promise.catch((err) => {
+            return { // Error response
+                statusCode: 401,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({
+                    error: err,
+                }),
+            };
+        });
+
         const rdsParams = {
             secretArn: 'arn:aws:secretsmanager:eu-central-1:597880501761:secret:rds-db-credentials/cluster-R2Q7TW2NSOTZSLDRPBDOIMSQE4/crossroads_dba-sJjF7R',
             resourceArn: 'arn:aws:rds:eu-central-1:597880501761:cluster:crossroads-db',
@@ -51,7 +69,7 @@ exports.handler = async (event, context) => {
                 }),
             };
         });
-        console.log("Userdata:", userData);
+        console.log("Userdata:", JSON.stringify(userData, null, 2));
         if (userData.records.length !== 1){
             response = { // Error response
                 statusCode: 401,
@@ -70,7 +88,7 @@ exports.handler = async (event, context) => {
         // const user = users.login(username, password);
 
         // Issue JWT
-        const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: JWT_EXPIRATION_TIME });
+        const token = jwt.sign({ user }, jwtSecret, { expiresIn: JWT_EXPIRATION_TIME });
         response = { // Success response
             statusCode: 200,
             headers: {
