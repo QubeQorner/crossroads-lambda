@@ -30,7 +30,7 @@ exports.handler = async (event, context) => {
         const secretParam = {
             SecretId: 'crossroads-prod'
         };
-        const jwtSecret = await secretsManager.getSecretValue(secretParam).promise.catch((err) => {
+        const jwtSecret = await secretsManager.getSecretValue(secretParam).promise().catch((err) => {
             return { // Error response
                 statusCode: 401,
                 headers: {
