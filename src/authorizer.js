@@ -3,8 +3,7 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const utils = require('./lib/utils');
-
-let response;
+const AWS = require("aws-sdk");
 
 /**
  * Returns a boolean whether or not a user is allowed to call a particular method
