@@ -39,7 +39,7 @@ exports.handler = async (event, context) => {
 
         const rdsDataService = new AWS.RDSDataService();
         const userData = await rdsDataService.executeStatement(rdsParams);
-        console.log("Userdata:", JSON.stringify(userData));
+        console.log("Userdata:", userData);
         if (userData.records.length !== 1){
             response = { // Error response
                 statusCode: 401,
